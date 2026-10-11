@@ -1,15 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-
-// Select exactly one physical panel before compiling.
-#define FRIDGE_PANEL_GDEM075F52 0  // 7.5-inch, 800x480, black/white/yellow/red four-color
-#define FRIDGE_PANEL_GDEM0397F81 1 // 3.97-inch, 800x480, black/white/yellow/red four-color
-#define FRIDGE_PANEL_GDEY042Z98 2  // 4.2-inch, 400x300, black/white/red tri-color (E042A13)
-
-// Change only the value on this line when using a different panel.
-// You should change this value depending on the panel you are using.
-#define FRIDGE_PANEL_TYPE FRIDGE_PANEL_GDEM075F52
+#include "HardwareConfig.h"
 
 #if FRIDGE_PANEL_TYPE == FRIDGE_PANEL_GDEM0397F81
 static const char* PANEL_PROFILE = "gdem0397f81";
@@ -17,6 +9,9 @@ static const char* PANEL_PROFILE = "gdem0397f81";
 static const char* PANEL_PROFILE = "gdey042z98";
 #elif FRIDGE_PANEL_TYPE == FRIDGE_PANEL_GDEM075F52
 static const char* PANEL_PROFILE = "gdem075f52";
+#elif FRIDGE_PANEL_TYPE == FRIDGE_PANEL_GDEM075F53
+// The server frame remains 800x480 2bpp-bwyr (96,000 bytes).
+static const char* PANEL_PROFILE = "gdem075f53";
 #else
   #error "Unsupported FRIDGE_PANEL_TYPE"
 #endif

@@ -18,6 +18,9 @@
 #else
 #include <GxEPD2_4C.h>
 #endif
+#if FRIDGE_PANEL_TYPE == FRIDGE_PANEL_GDEM075F53
+#include "GxEPD2_750c_GDEM075F53.h"
+#endif
 #include <Fonts/FreeMonoBold9pt7b.h>
 
 #include "ProvisioningPage.h"
@@ -29,6 +32,10 @@ GxEPD2_3C<GxEPD2_420c_GDEY042Z98, DISPLAY_PAGE_HEIGHT> display(
 #elif FRIDGE_PANEL_TYPE == FRIDGE_PANEL_GDEM0397F81
 GxEPD2_4C<GxEPD2_397c_GDEM0397F81, DISPLAY_PAGE_HEIGHT> display(
   GxEPD2_397c_GDEM0397F81(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY)
+);
+#elif FRIDGE_PANEL_TYPE == FRIDGE_PANEL_GDEM075F53
+GxEPD2_4C<GxEPD2_750c_GDEM075F53, DISPLAY_PAGE_HEIGHT> display(
+  GxEPD2_750c_GDEM075F53(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY)
 );
 #else
 GxEPD2_4C<GxEPD2_750c_GDEM075F52, DISPLAY_PAGE_HEIGHT> display(
@@ -838,6 +845,12 @@ bool drawStoredImage() {
   display.init();
   display.setRotation(0);
   logHeap("Heap before chunked drawNative");
+
+#if FRIDGE_PANEL_TYPE == FRIDGE_PANEL_GDEM075F53
+  // F53 accepts sequential rows, not F52's random-access window writes.
+  // This is chunking one frame in RAM, not the server's multi-page protocol.
+  display.epd2.setPaged();
+#endif
 
   for (uint16_t y = 0; y < DISPLAY_HEIGHT; y += DISPLAY_DRAW_CHUNK_ROWS) {
     uint16_t rows = DISPLAY_DRAW_CHUNK_ROWS;

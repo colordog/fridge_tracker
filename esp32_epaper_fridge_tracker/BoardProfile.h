@@ -1,11 +1,30 @@
 #pragma once
 
 #include <Arduino.h>
+#include "HardwareConfig.h"
 
 #if CONFIG_IDF_TARGET_ESP32C3
 
 #define FRIDGE_BOARD_ESP32C3 1
 #define FRIDGE_BOARD_ESP32S3 0
+
+#if FRIDGE_C3_BOARD_TYPE == FRIDGE_C3_BOARD_MOYU_AI_V111
+
+#define FRIDGE_BOARD_NAME "Moyu AI V1.1.1"
+#define FRIDGE_DEVICE_NAME "XianZhi Tie Moyu"
+
+// Moyu AI V1.1.1 integrated e-paper SPI pins and BOOT button.
+static const int EPD_CS = 7;
+static const int EPD_DC = 1;
+static const int EPD_RST = 2;
+static const int EPD_BUSY = 10;
+static const int EPD_SCK = 4;
+static const int EPD_MOSI = 6;
+static const int EPD_MISO = -1;
+static const int CONFIG_BUTTON_PIN = 9;
+
+#elif FRIDGE_C3_BOARD_TYPE == FRIDGE_C3_BOARD_SUPER_MINI
+
 #define FRIDGE_BOARD_NAME "ESP32-C3 Super Mini"
 #define FRIDGE_DEVICE_NAME "XianZhi Tie C3"
 
@@ -18,7 +37,13 @@ static const int EPD_MOSI = 6;
 static const int EPD_MISO = -1;
 static const int CONFIG_BUTTON_PIN = 0;
 
-// The C3 Super Mini normally has no PSRAM, so four-color frames are read from
+#else
+
+#error "Unsupported FRIDGE_C3_BOARD_TYPE"
+
+#endif
+
+// The supported C3 boards have no PSRAM, so four-color frames are read from
 // FFat in small chunks. Reduced TX power also lowers peak current on this board.
 #define FRIDGE_USE_CHUNKED_4C_DRAW 1
 #define FRIDGE_LIMIT_WIFI_TX_POWER 1
